@@ -11,10 +11,6 @@ public class Transaction {
         this.date = date;
     }
 
-    public Amount amount() {
-        return amount;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
