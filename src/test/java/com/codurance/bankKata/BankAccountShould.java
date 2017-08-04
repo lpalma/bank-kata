@@ -1,6 +1,7 @@
 package com.codurance.bankKata;
 
 import com.codurance.bankKata.exception.NegativeDepositException;
+import com.codurance.bankKata.exception.PositiveWithdrawalException;
 import com.codurance.bankKata.repository.BalanceRepository;
 import com.codurance.bankKata.valueObject.Amount;
 import com.codurance.bankKata.valueObject.Transaction;
@@ -42,6 +43,38 @@ public class BankAccountShould {
         account.deposit(amount);
 
         verify(balanceRepository).add(new Transaction(amount, date));
+    }
+
+    @Test
+    public void accept_withdrawal() throws PositiveWithdrawalException {
+        LocalDate date = LocalDate.of(2014, 4, 2);
+        Amount amount = new Amount(-1000);
+
+        given(clock.now()).willReturn(date);
+
+        account.withdraw(amount);
+
+        verify(balanceRepository).add(new Transaction(amount, date));
+    }
+
+    @Test
+    public void not_accept_withdrawal_of_positive_amount() {
+        Amount amount = new Amount(1000);
+
+        try {
+            account.withdraw(amount);
+        } catch (PositiveWithdrawalException e) {
+            //
+        } finally {
+            verifyZeroInteractions(balanceRepository);
+        }
+    }
+
+    @Test(expected = PositiveWithdrawalException.class)
+    public void throw_exception_if_withdrawal_is_negative() throws NegativeDepositException, PositiveWithdrawalException {
+        Amount amount = new Amount(1000);
+
+        account.withdraw(amount);
     }
 
     @Test
