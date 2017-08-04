@@ -33,7 +33,7 @@ public class BankAccountShould {
     }
 
     @Test
-    public void accept_deposit_and_increase_balance() throws NegativeDepositException {
+    public void accept_deposit() throws NegativeDepositException {
         LocalDate date = LocalDate.of(2014, 4, 2);
         Amount amount = new Amount(1000);
 
