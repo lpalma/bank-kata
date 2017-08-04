@@ -4,6 +4,8 @@ import com.codurance.bankKata.BankAccount;
 import com.codurance.bankKata.Clock;
 import com.codurance.bankKata.Console;
 import com.codurance.bankKata.StatementService;
+import com.codurance.bankKata.repository.BalanceRepository;
+import com.codurance.bankKata.valueObject.Amount;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,10 +31,13 @@ public class PrintStatementFeatureShould {
 
     private BankAccount account;
 
+    private BalanceRepository balanceRepository;
+
     @Before
     public void setUp() {
         statementService = new StatementService(console);
-        account = new BankAccount(clock);
+        balanceRepository = new BalanceRepository();
+        account = new BankAccount(clock, balanceRepository);
     }
 
     @Test
@@ -42,9 +47,9 @@ public class PrintStatementFeatureShould {
                 date(2014, 4, 2),
                 date(2014, 4, 10));
 
-        account.deposit(1000);
+        account.deposit(new Amount(1000));
         account.withdraw(100);
-        account.deposit(500);
+        account.deposit(new Amount(500));
 
         statementService.printStatement();
 
