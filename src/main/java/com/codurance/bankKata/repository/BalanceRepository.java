@@ -1,11 +1,18 @@
 package com.codurance.bankKata.repository;
 
-import com.codurance.bankKata.valueObject.Amount;
+import com.codurance.bankKata.valueObject.Transaction;
 
-import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Collection;
 
 public class BalanceRepository {
-    public void add(Amount amount, LocalDate date) {
-        throw new UnsupportedOperationException();
+    private ArrayList<Transaction> transactions = new ArrayList<>();
+
+    public void add(Transaction transaction) {
+        transactions.add(transaction);
+    }
+
+    public Collection<Transaction> all() {
+        return transactions;
     }
 }

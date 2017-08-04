@@ -2,6 +2,7 @@ package com.codurance.bankKata;
 
 import com.codurance.bankKata.repository.BalanceRepository;
 import com.codurance.bankKata.valueObject.Amount;
+import com.codurance.bankKata.valueObject.Transaction;
 
 public class BankAccount {
     private Clock clock;
@@ -13,7 +14,9 @@ public class BankAccount {
     }
 
     public void deposit(Amount amount) {
-        balanceRepository.add(amount, clock.now());
+        Transaction transaction = new Transaction(amount, clock.now());
+
+        balanceRepository.add(transaction);
     }
 
     public void withdraw(int amount) {

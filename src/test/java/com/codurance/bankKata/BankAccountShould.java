@@ -2,6 +2,7 @@ package com.codurance.bankKata;
 
 import com.codurance.bankKata.repository.BalanceRepository;
 import com.codurance.bankKata.valueObject.Amount;
+import com.codurance.bankKata.valueObject.Transaction;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -31,6 +32,6 @@ public class BankAccountShould {
 
         account.deposit(amount);
 
-        verify(balanceRepository).add(amount, date);
+        verify(balanceRepository).add(new Transaction(amount, date));
     }
 }
