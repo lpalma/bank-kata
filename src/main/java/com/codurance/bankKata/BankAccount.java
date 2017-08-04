@@ -28,8 +28,16 @@ public class BankAccount {
         throw new UnsupportedOperationException();
     }
 
+    public Amount balance() {
+        int amount = balanceRepository.all()
+                .stream()
+                .mapToInt(transaction -> transaction.amount().value())
+                .sum();
+
+        return new Amount(amount);
+    }
+
     private Transaction createTransaction(Amount amount) {
         return new Transaction(amount, clock.now());
     }
-
 }
