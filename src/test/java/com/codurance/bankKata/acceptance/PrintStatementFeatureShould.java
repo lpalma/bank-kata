@@ -5,7 +5,7 @@ import com.codurance.bankKata.Clock;
 import com.codurance.bankKata.Console;
 import com.codurance.bankKata.StatementService;
 import com.codurance.bankKata.exception.NegativeAmountException;
-import com.codurance.bankKata.repository.BalanceRepository;
+import com.codurance.bankKata.repository.TransactionRepository;
 import com.codurance.bankKata.valueObject.Amount;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,13 +32,13 @@ public class PrintStatementFeatureShould {
 
     private BankAccount account;
 
-    private BalanceRepository balanceRepository;
+    private TransactionRepository transactionRepository;
 
     @Before
     public void setUp() {
         statementService = new StatementService(console);
-        balanceRepository = new BalanceRepository();
-        account = new BankAccount(clock, balanceRepository);
+        transactionRepository = new TransactionRepository();
+        account = new BankAccount(clock, transactionRepository);
     }
 
     @Test

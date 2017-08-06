@@ -11,6 +11,10 @@ public class Transaction {
         this.date = date;
     }
 
+    public Transaction asNegative() {
+        return new Transaction(amount.asNegative(), date);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

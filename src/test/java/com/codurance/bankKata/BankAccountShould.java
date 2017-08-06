@@ -1,7 +1,7 @@
 package com.codurance.bankKata;
 
 import com.codurance.bankKata.exception.NegativeAmountException;
-import com.codurance.bankKata.repository.BalanceRepository;
+import com.codurance.bankKata.repository.TransactionRepository;
 import com.codurance.bankKata.valueObject.Amount;
 import com.codurance.bankKata.valueObject.Transaction;
 import org.junit.Before;
@@ -23,13 +23,13 @@ public class BankAccountShould {
     private Clock clock;
 
     @Mock
-    private BalanceRepository balanceRepository;
+    private TransactionRepository transactionRepository;
 
     private BankAccount account;
 
     @Before
     public void setUp() {
-        account = new BankAccount(clock, balanceRepository);
+        account = new BankAccount(clock, transactionRepository);
     }
 
     @Test
@@ -41,7 +41,7 @@ public class BankAccountShould {
 
         account.deposit(amount);
 
-        verify(balanceRepository).add(new Transaction(amount, date));
+        verify(transactionRepository).addDeposit(new Transaction(amount, date));
     }
 
     @Test
@@ -53,7 +53,7 @@ public class BankAccountShould {
 
         account.withdraw(amount);
 
-        verify(balanceRepository).add(new Transaction(amount, date));
+        verify(transactionRepository).addWithdrawal(new Transaction(amount, date));
     }
 
     @Test
@@ -65,7 +65,7 @@ public class BankAccountShould {
         } catch (NegativeAmountException e) {
             //
         } finally {
-            verifyZeroInteractions(balanceRepository);
+            verifyZeroInteractions(transactionRepository);
         }
     }
 
@@ -85,7 +85,7 @@ public class BankAccountShould {
         } catch (NegativeAmountException e) {
             //
         } finally {
-            verifyZeroInteractions(balanceRepository);
+            verifyZeroInteractions(transactionRepository);
         }
     }
 
