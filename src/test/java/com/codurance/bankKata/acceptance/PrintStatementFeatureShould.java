@@ -4,8 +4,7 @@ import com.codurance.bankKata.BankAccount;
 import com.codurance.bankKata.Clock;
 import com.codurance.bankKata.Console;
 import com.codurance.bankKata.StatementService;
-import com.codurance.bankKata.exception.NegativeDepositException;
-import com.codurance.bankKata.exception.PositiveWithdrawalException;
+import com.codurance.bankKata.exception.NegativeAmountException;
 import com.codurance.bankKata.repository.BalanceRepository;
 import com.codurance.bankKata.valueObject.Amount;
 import org.junit.Before;
@@ -43,14 +42,14 @@ public class PrintStatementFeatureShould {
     }
 
     @Test
-    public void print_statement_in_reverse_chronological_order() throws NegativeDepositException, PositiveWithdrawalException {
+    public void print_statement_in_reverse_chronological_order() throws NegativeAmountException {
         given(clock.now()).willReturn(
                 date(2014, 4, 1),
                 date(2014, 4, 2),
                 date(2014, 4, 10));
 
         account.deposit(new Amount(1000));
-        account.withdraw(new Amount(-100));
+        account.withdraw(new Amount(100));
         account.deposit(new Amount(500));
 
         statementService.printStatement();

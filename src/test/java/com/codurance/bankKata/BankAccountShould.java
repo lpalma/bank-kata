@@ -1,7 +1,6 @@
 package com.codurance.bankKata;
 
-import com.codurance.bankKata.exception.NegativeDepositException;
-import com.codurance.bankKata.exception.PositiveWithdrawalException;
+import com.codurance.bankKata.exception.NegativeAmountException;
 import com.codurance.bankKata.repository.BalanceRepository;
 import com.codurance.bankKata.valueObject.Amount;
 import com.codurance.bankKata.valueObject.Transaction;
@@ -34,7 +33,7 @@ public class BankAccountShould {
     }
 
     @Test
-    public void accept_deposit() throws NegativeDepositException {
+    public void accept_deposit() throws NegativeAmountException {
         LocalDate date = LocalDate.of(2014, 4, 2);
         Amount amount = new Amount(1000);
 
@@ -46,9 +45,9 @@ public class BankAccountShould {
     }
 
     @Test
-    public void accept_withdrawal() throws PositiveWithdrawalException {
+    public void accept_withdrawal() throws NegativeAmountException {
         LocalDate date = LocalDate.of(2014, 4, 2);
-        Amount amount = new Amount(-1000);
+        Amount amount = new Amount(1000);
 
         given(clock.now()).willReturn(date);
 
@@ -58,21 +57,21 @@ public class BankAccountShould {
     }
 
     @Test
-    public void not_accept_withdrawal_of_positive_amount() {
-        Amount amount = new Amount(1000);
+    public void not_accept_withdrawal_of_negative_amount() {
+        Amount amount = new Amount(-1000);
 
         try {
             account.withdraw(amount);
-        } catch (PositiveWithdrawalException e) {
+        } catch (NegativeAmountException e) {
             //
         } finally {
             verifyZeroInteractions(balanceRepository);
         }
     }
 
-    @Test(expected = PositiveWithdrawalException.class)
-    public void throw_exception_if_withdrawal_is_negative() throws NegativeDepositException, PositiveWithdrawalException {
-        Amount amount = new Amount(1000);
+    @Test(expected = NegativeAmountException.class)
+    public void throw_exception_if_withdrawal_is_negative() throws NegativeAmountException {
+        Amount amount = new Amount(-1000);
 
         account.withdraw(amount);
     }
@@ -83,15 +82,15 @@ public class BankAccountShould {
 
         try {
             account.deposit(amount);
-        } catch (NegativeDepositException e) {
+        } catch (NegativeAmountException e) {
             //
         } finally {
             verifyZeroInteractions(balanceRepository);
         }
     }
 
-    @Test(expected = NegativeDepositException.class)
-    public void throw_exception_if_deposit_is_negative() throws NegativeDepositException {
+    @Test(expected = NegativeAmountException.class)
+    public void throw_exception_if_deposit_is_negative() throws NegativeAmountException {
         Amount amount = new Amount(-1000);
 
         account.deposit(amount);
