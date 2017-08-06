@@ -48,6 +48,10 @@ public class BankAccount {
         transactionRepository.addWithdrawal(amount, clock.now(), balance);
     }
 
+    public Collection<Transaction> transactions() {
+        return transactionRepository.all();
+    }
+
     private void decreaseBalance(Amount amount) {
         balance = balance.decreaseBy(amount.getAmount());
     }
