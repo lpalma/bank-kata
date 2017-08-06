@@ -4,9 +4,11 @@ import com.codurance.bankKata.BankAccount;
 import com.codurance.bankKata.Clock;
 import com.codurance.bankKata.Console;
 import com.codurance.bankKata.StatementService;
+import com.codurance.bankKata.exception.InsufficientBalanceException;
 import com.codurance.bankKata.exception.NegativeAmountException;
 import com.codurance.bankKata.repository.TransactionRepository;
 import com.codurance.bankKata.valueObject.Amount;
+import com.codurance.bankKata.valueObject.Balance;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,13 +38,13 @@ public class PrintStatementFeatureShould {
 
     @Before
     public void setUp() {
-        statementService = new StatementService(console);
         transactionRepository = new TransactionRepository();
-        account = new BankAccount(clock, transactionRepository);
+        account = new BankAccount(clock, transactionRepository, new Balance(0));
+        statementService = new StatementService(account, console);
     }
 
     @Test
-    public void print_statement_in_reverse_chronological_order() throws NegativeAmountException {
+    public void print_statement_in_reverse_chronological_order() throws NegativeAmountException, InsufficientBalanceException {
         given(clock.now()).willReturn(
                 date(2014, 4, 1),
                 date(2014, 4, 2),

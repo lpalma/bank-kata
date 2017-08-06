@@ -1,8 +1,10 @@
 package com.codurance.bankKata;
 
+import com.codurance.bankKata.exception.InsufficientBalanceException;
 import com.codurance.bankKata.exception.NegativeAmountException;
 import com.codurance.bankKata.repository.TransactionRepository;
 import com.codurance.bankKata.valueObject.Amount;
+import com.codurance.bankKata.valueObject.Balance;
 import com.codurance.bankKata.valueObject.Transaction;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,6 +14,8 @@ import org.mockito.junit.MockitoJUnitRunner;
 
 import java.time.LocalDate;
 
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.IsEqual.equalTo;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -25,39 +29,57 @@ public class BankAccountShould {
     @Mock
     private TransactionRepository transactionRepository;
 
-    private BankAccount account;
-
-    @Before
-    public void setUp() {
-        account = new BankAccount(clock, transactionRepository);
-    }
-
     @Test
-    public void accept_deposit() throws NegativeAmountException {
+    public void accept_deposit_and_increase_balance() throws NegativeAmountException {
+        BankAccount account = accountWithBalance(0);
         LocalDate date = LocalDate.of(2014, 4, 2);
         Amount amount = new Amount(1000);
+        Balance balance = new Balance(1000);
 
         given(clock.now()).willReturn(date);
 
         account.deposit(amount);
 
-        verify(transactionRepository).addDeposit(new Transaction(amount, date));
+        verify(transactionRepository).addDeposit(amount, date, balance);
+
+        assertThat(account.balance(), equalTo(balance));
     }
 
     @Test
-    public void accept_withdrawal() throws NegativeAmountException {
+    public void accept_withdrawal_and_decrease_balance() throws NegativeAmountException, InsufficientBalanceException {
+        BankAccount account = accountWithBalance(1000);
         LocalDate date = LocalDate.of(2014, 4, 2);
-        Amount amount = new Amount(1000);
+        Amount amount = new Amount(500);
+        Balance balance = new Balance(500);
 
         given(clock.now()).willReturn(date);
 
         account.withdraw(amount);
 
-        verify(transactionRepository).addWithdrawal(new Transaction(amount, date));
+        verify(transactionRepository).addWithdrawal(amount, date, balance);
+
+        assertThat(account.balance(), equalTo(balance));
     }
 
     @Test
-    public void not_accept_withdrawal_of_negative_amount() {
+    public void not_accept_withdraw_when_balance_is_insufficient() throws NegativeAmountException {
+        BankAccount account = accountWithBalance(0);
+
+        Amount amount = new Amount(10);
+
+        try {
+            account.withdraw(amount);
+        } catch (InsufficientBalanceException e) {
+            //
+        } finally {
+            verifyZeroInteractions(transactionRepository);
+        }
+    }
+
+    @Test
+    public void not_accept_withdrawal_of_negative_amount() throws InsufficientBalanceException {
+        BankAccount account = accountWithBalance(0);
+
         Amount amount = new Amount(-1000);
 
         try {
@@ -69,15 +91,10 @@ public class BankAccountShould {
         }
     }
 
-    @Test(expected = NegativeAmountException.class)
-    public void throw_exception_if_withdrawal_is_negative() throws NegativeAmountException {
-        Amount amount = new Amount(-1000);
-
-        account.withdraw(amount);
-    }
-
     @Test
     public void not_accept_deposit_of_negative_amount() {
+        BankAccount account = accountWithBalance(0);
+
         Amount amount = new Amount(-1000);
 
         try {
@@ -89,10 +106,7 @@ public class BankAccountShould {
         }
     }
 
-    @Test(expected = NegativeAmountException.class)
-    public void throw_exception_if_deposit_is_negative() throws NegativeAmountException {
-        Amount amount = new Amount(-1000);
-
-        account.deposit(amount);
+    private BankAccount accountWithBalance(int balance) {
+        return new BankAccount(clock, transactionRepository, new Balance(balance));
     }
 }

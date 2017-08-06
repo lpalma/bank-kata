@@ -1,6 +1,7 @@
 package com.codurance.bankKata.repository;
 
 import com.codurance.bankKata.valueObject.Amount;
+import com.codurance.bankKata.valueObject.Balance;
 import com.codurance.bankKata.valueObject.Transaction;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,9 +22,12 @@ public class TransactionRepositoryShould {
 
     @Test
     public void add_deposit() {
-        Transaction transaction = new Transaction(new Amount(1000), LocalDate.of(2014, 4, 2));
+        Amount amount = new Amount(1000);
+        LocalDate date = LocalDate.of(2014, 4, 2);
+        Balance balance = new Balance(1000);
+        Transaction transaction = new Transaction(amount, date, balance);
 
-        repository.addDeposit(transaction);
+        repository.addDeposit(amount, date, balance);
 
         assertThat(repository.all(), hasItem(transaction));
     }
@@ -31,9 +35,12 @@ public class TransactionRepositoryShould {
     @Test
     public void add_withdrawal_as_negative_transaction() {
         LocalDate date = LocalDate.of(2014, 4, 2);
-        Transaction transaction = new Transaction(new Amount(-1000), date);
+        Amount amount = new Amount(-1000);
+        Balance balance = new Balance(0);
 
-        repository.addWithdrawal(new Transaction(new Amount(1000), date));
+        Transaction transaction = new Transaction(amount, date, balance);
+
+        repository.addWithdrawal(amount, date, balance);
 
         assertThat(repository.all(), hasItem(transaction));
     }

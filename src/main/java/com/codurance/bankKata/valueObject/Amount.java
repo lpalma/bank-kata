@@ -17,6 +17,10 @@ public class Amount  {
                 : new Amount(- amount);
     }
 
+    public Integer getAmount() {
+        return amount;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

@@ -5,14 +5,12 @@ import java.time.LocalDate;
 public class Transaction {
     private Amount amount;
     private LocalDate date;
+    private Balance balance;
 
-    public Transaction(Amount amount, LocalDate date) {
+    public Transaction(Amount amount, LocalDate date, Balance balance) {
         this.amount = amount;
         this.date = date;
-    }
-
-    public Transaction asNegative() {
-        return new Transaction(amount.asNegative(), date);
+        this.balance = balance;
     }
 
     @Override
